@@ -39,10 +39,9 @@
   :type 'file)
 
 ;;;###autoload
-(defun streak--days-since-unix-epoch ()
-  "The number of days since the Unix Epoch."
-  (/ (time-convert nil 'integer)
-     streak--seconds-per-day))
+(defun streak--seconds-since-unix-epoch ()
+  "The number of seconds since the Unix Epoch."
+  (time-convert nil 'integer))
 
 ;;;###autoload
 (defun streak-current ()
@@ -56,8 +55,8 @@
 ;;;###autoload
 (defun streak--render (start)
   "Give a human-friendly presentation of the streak, given its START."
-  (let* ((today (streak--days-since-unix-epoch))
-         (delta (- today start)))
+  (let* ((now (streak--seconds-since-unix-epoch))
+         (delta (/ (- now start) streak--seconds-per-day)))
     (cond ((< delta 0) "Streak Starts Tomorrow")
           ((= 1 delta) "1 Day")
           (t (format "%d Days" delta)))))
@@ -73,26 +72,29 @@
 (defun streak-init ()
   "Mark today as the start of a new streak."
   (interactive)
-  (when-let ((buffer (find-file-noselect streak-file))
-             (today (streak--days-since-unix-epoch)))
-    (with-current-buffer buffer
-      (message "Streak: Setting your first streak!")
-      (delete-region (point-min) (point-max))
-      (insert (format "%d\n" today))
-      (save-buffer))))
+  (let ((now (streak--seconds-since-unix-epoch)))
+    (message "Streak: Setting your first streak!")
+    (streak-set now)))
 
 ;;;###autoload
 (defun streak-reset ()
   "Reset the streak back to 0."
   (interactive)
+  (let ((tomorrow (streak--tomorrow)))
+    (message "Streak: Resetting your streak. Don't worry, you'll get it next time!")
+    (streak-set tomorrow)
+    (setq streak--streak-message (streak--render tomorrow))))
+
+;;;###autoload
+(defun streak-set (seconds)
+  "Set the streak in the streak file, given SECONDS since the Unix epoch."
+  (interactive "nSeconds since the Unix Epoch: ")
   (when-let ((buffer (find-file-noselect streak-file))
-             (tomorrow (streak--tomorrow)))
+             (date (format-time-string "%Y-%m-%d %H:%M" seconds (current-time-zone))))
     (with-current-buffer buffer
-      (message "Streak: Resetting your streak. Restart Emacs to see the effect.")
       (delete-region (point-min) (point-max))
-      (insert (format "%d\n" tomorrow))
-      (save-buffer)
-      (setq streak--streak-message (streak--render tomorrow)))))
+      (insert (format "%d ;; %s\n" seconds date))
+      (save-buffer))))
 
 ;;;###autoload
 (defun streak-update ()
@@ -102,8 +104,8 @@
 
 ;;;###autoload
 (defun streak--tomorrow ()
-  "Tomorrow's date, as days since the Unix epoch."
-  (1+ (streak--days-since-unix-epoch)))
+  "A time tomorrow, as seconds since the Unix epoch."
+  (+ streak--seconds-per-day (streak--seconds-since-unix-epoch)))
 
 ;;;###autoload
 (defun streak--show-streak-in-modeline ()
