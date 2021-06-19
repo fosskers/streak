@@ -25,3 +25,16 @@ And make sure to run =doom sync -u=. Then in your =config.el=:
 #+end_src
 
 This will start =streak-mode= upon startup.
+
+* Usage
+
+=streak-mode= will automatically initialize the "streak file" the first time it is
+ran. Once you've started a streak, it will increment (in the mode line)
+automatically day by day.
+
+Otherwise, consider these functions for more manual control:
+
++ =streak-reset=: Reset your streak, with "now" as the new starting point.
++ =streak-increment=: Increase your streak by 24 hours worth.
++ =streak-decrement=: The opposite of the above.
++ =streak-update=: Reread the streak file and manually update the mode line.
