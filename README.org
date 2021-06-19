@@ -1,0 +1,25 @@
+#+TITLE: Streak
+
+This Emacs Lisp package provides =streak-mode=, a minor mode for tracking some
+daily streak. Exercising? Learning a language? Track your success in your mode
+line!
+
+* Installation
+
+** Doom Emacs
+
+Place the following in your =packages.el=:
+
+#+begin_src elisp
+(package! streak
+  :recipe (:host github :repo "fosskers/streak"))
+#+end_src
+
+And make sure to run =doom sync -u=. Then in your =config.el=:
+
+#+begin_src elisp
+(require 'streak)
+(streak-mode)
+#+end_src
+
+This will start =streak-mode= upon startup.

@@ -2,12 +2,12 @@
 ;;
 ;; Copyright (C) 2021 Colin Woodbury
 ;;
-;; Author: Colin Woodbury <https://github.com/fosskers>
+;; Author: Colin Woodbury <https://www.fosskers.ca>
 ;; Maintainer: Colin Woodbury <colin@fosskers.ca>
 ;; Created: June 18, 2021
 ;; Modified: June 18, 2021
-;; Version: 0.0.1
-;; Keywords: Symbol’s value as variable is void: finder-known-keywords
+;; Version: 1.0.0
+;; Keywords: streak, tracking, record
 ;; Homepage: https://github.com/fosskers/streak
 ;; Package-Requires: ((emacs "24.3"))
 ;;
@@ -15,7 +15,8 @@
 ;;
 ;;; Commentary:
 ;;
-;;  Description
+;; `streak-mode' is a minor mode for tracking some daily streak.
+;; Exercising? Learning a language? Track your success in your mode line!
 ;;
 ;;; Code:
 
@@ -46,7 +47,6 @@
 ;;;###autoload
 (defun streak-current ()
   "Read the streak file for the current streak."
-  (interactive)
   (unless (file-exists-p streak-file)
     (streak-init))
   (when-let ((buffer (find-file-noselect streak-file))
@@ -102,7 +102,6 @@
 ;;;###autoload
 (defun streak--show-streak-in-modeline ()
   "Show the current streak count in days in the mode line."
-  ;; (add-to-list 'global-mode-string '(t (:eval (streak-current)))))
   (unless streak--streak-message
     (setq streak--streak-message (streak-current)))
   (add-to-list 'global-mode-string '(t streak--streak-message)))
