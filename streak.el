@@ -29,7 +29,10 @@
 (defvar streak--seconds-per-day 86400
   "The number of seconds in a day.")
 
-(defcustom streak-file (substitute-in-file-name "$HOME/.streak")
+(defvar streak--streak-message nil
+  "String representation of the current streak.")
+
+(defcustom streak-file (substitute-in-file-name "$HOME/.cache/streak")
   "The location to save the start of the current streak."
   :group 'streak
   :type 'file)
@@ -47,13 +50,18 @@
     (streak-init))
   (when-let ((buffer (find-file-noselect streak-file)))
     (with-current-buffer buffer
-      (let* ((raw (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-             (start (string-to-number raw))
+      (let* ((start (string-to-number (streak--raw-streak-string)))
              (today (streak--days-since-unix-epoch))
              (delta (- today start)))
         (if (= 1 delta)
             "1 Day"
           (format "%d Days" delta))))))
+
+(defun streak--raw-streak-string ()
+  "The raw string contents of the streak file."
+  (when-let ((buffer (find-file-noselect streak-file)))
+    (with-current-buffer buffer
+      (buffer-substring-no-properties (line-beginning-position) (line-end-position)))))
 
 ;;;###autoload
 (defun streak-init ()
@@ -86,7 +94,10 @@
 ;;;###autoload
 (defun streak--show-streak-in-modeline ()
   "Show the current streak count in days in the mode line."
-  (add-to-list 'global-mode-string '(t (:eval (streak-current)))))
+  ;; (add-to-list 'global-mode-string '(t (:eval (streak-current)))))
+  (unless streak--streak-message
+    (setq streak--streak-message (streak-current)))
+  (add-to-list 'global-mode-string '(t streak--streak-message)))
 
 (add-hook 'streak-mode-on-hook #'streak--show-streak-in-modeline)
 
