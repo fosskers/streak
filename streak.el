@@ -41,15 +41,13 @@
      streak--seconds-per-day))
 
 ;;;###autoload
-(defun streak--read-streak-start ()
-  "Read the starting date of the current streak."
+(defun streak-current ()
+  "The current streak."
   (unless (file-exists-p streak-file)
     (streak-init))
   (when-let ((buffer (find-file-noselect streak-file)))
     (with-current-buffer buffer
-      (let* ((raw (progn
-                    (copy-region-as-kill (line-beginning-position) (line-end-position))
-                    (current-kill 0)))
+      (let* ((raw (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
              (start (string-to-number raw))
              (today (streak--days-since-unix-epoch))
              (delta (- today start)))
@@ -88,7 +86,7 @@
 ;;;###autoload
 (defun streak--show-streak-in-modeline ()
   "Show the current streak count in days in the mode line."
-  (add-to-list 'global-mode-string '(t (:eval (streak--read-streak-start)))))
+  (add-to-list 'global-mode-string '(t (:eval (streak-current)))))
 
 (add-hook 'streak-mode-on-hook #'streak--show-streak-in-modeline)
 
