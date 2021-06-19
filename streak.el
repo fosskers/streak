@@ -34,11 +34,13 @@
   :group 'streak
   :type 'file)
 
+;;;###autoload
 (defun streak--days-since-unix-epoch ()
   "The number of days since the Unix Epoch."
   (/ (time-convert nil 'integer)
      streak--seconds-per-day))
 
+;;;###autoload
 (defun streak--read-streak-start ()
   "Read the starting date of the current streak."
   (unless (file-exists-p streak-file)
@@ -55,6 +57,7 @@
             "1 Day"
           (format "%d Days" delta))))))
 
+;;;###autoload
 (defun streak-init ()
   "Mark today as the start of a new streak."
   (interactive)
@@ -66,6 +69,7 @@
       (insert (format "%d\n" today))
       (save-buffer))))
 
+;;;###autoload
 (defun streak-reset ()
   "Reset the streak back to 0."
   (interactive)
@@ -76,10 +80,12 @@
       (insert (streak--tomorrow))
       (save-buffer))))
 
+;;;###autoload
 (defun streak--tomorrow ()
   "Tomorrow's date, as days since the Unix epoch."
   (1+ (streak--days-since-unix-epoch)))
 
+;;;###autoload
 (defun streak--show-streak-in-modeline ()
   "Show the current streak count in days in the mode line."
   (add-to-list 'global-mode-string '(t (:eval (streak--read-streak-start)))))
