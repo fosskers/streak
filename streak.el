@@ -51,10 +51,10 @@
 ;;;###autoload
 (defun streak--current-int ()
   "Read the streak file for the current streak."
-  (unless (file-exists-p streak-file)
-    (streak-init))
-  (when-let ((buffer (find-file-noselect streak-file)))
-    (string-to-number (streak--buffer-first-line buffer))))
+  (if (not (file-exists-p streak-file))
+      (streak--init)
+    (when-let ((buffer (find-file-noselect streak-file)))
+      (string-to-number (streak--buffer-first-line buffer)))))
 
 ;;;###autoload
 (defun streak--render (start)
@@ -73,21 +73,20 @@
     (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
 
 ;;;###autoload
-(defun streak-init ()
-  "Mark today as the start of a new streak."
-  (interactive)
+(defun streak--init ()
+  "Initialize the streak file but don't set the mode line.
+Returns the time that was set."
   (let ((now (streak--seconds-since-unix-epoch)))
-    (message "Streak: Setting your first streak!")
-    (streak-set now)))
+    (message "Streak: Setting your streak start to the current time.")
+    (streak-set now)
+    now))
 
 ;;;###autoload
 (defun streak-reset ()
-  "Reset the streak back to 0."
+  "Mark the current time as the start of a new streak."
   (interactive)
-  (let ((tomorrow (streak--tomorrow)))
-    (message "Streak: Resetting your streak. Don't worry, you'll get it next time!")
-    (streak-set tomorrow)
-    (setq streak--streak-message (streak--render tomorrow))))
+  (let ((now (streak--init)))
+    (setq streak--streak-message (streak--render now))))
 
 ;;;###autoload
 (defun streak-set (seconds)
