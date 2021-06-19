@@ -6,6 +6,8 @@ line!
 
 * Installation
 
+/Instructions for Vanilla Emacs needed./
+
 ** Doom Emacs
 
 Place the following in your =packages.el=:
