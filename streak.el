@@ -45,23 +45,29 @@
 
 ;;;###autoload
 (defun streak-current ()
-  "The current streak."
+  "Read the streak file for the current streak."
+  (interactive)
   (unless (file-exists-p streak-file)
     (streak-init))
-  (when-let ((buffer (find-file-noselect streak-file)))
-    (with-current-buffer buffer
-      (let* ((start (string-to-number (streak--raw-streak-string)))
-             (today (streak--days-since-unix-epoch))
-             (delta (- today start)))
-        (if (= 1 delta)
-            "1 Day"
-          (format "%d Days" delta))))))
+  (when-let ((buffer (find-file-noselect streak-file))
+             (start (string-to-number (streak--buffer-first-line buffer))))
+    (streak--render start)))
 
-(defun streak--raw-streak-string ()
-  "The raw string contents of the streak file."
-  (when-let ((buffer (find-file-noselect streak-file)))
-    (with-current-buffer buffer
-      (buffer-substring-no-properties (line-beginning-position) (line-end-position)))))
+;;;###autoload
+(defun streak--render (start)
+  "Give a human-friendly presentation of the streak, given its START."
+  (let* ((today (streak--days-since-unix-epoch))
+         (delta (- today start)))
+    (cond ((< delta 0) "Streak Starts Tomorrow")
+          ((= 1 delta) "1 Day")
+          (t (format "%d Days" delta)))))
+
+;;;###autoload
+(defun streak--buffer-first-line (buffer)
+  "Yield the first line of a BUFFER as a string."
+  (with-current-buffer buffer
+    (goto-char (point-min))
+    (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
 
 ;;;###autoload
 (defun streak-init ()
@@ -79,12 +85,14 @@
 (defun streak-reset ()
   "Reset the streak back to 0."
   (interactive)
-  (when-let ((buffer (find-file-noselect streak-file)))
+  (when-let ((buffer (find-file-noselect streak-file))
+             (tomorrow (streak--tomorrow)))
     (with-current-buffer buffer
       (message "Streak: Resetting your streak. Restart Emacs to see the effect.")
       (delete-region (point-min) (point-max))
-      (insert (streak--tomorrow))
-      (save-buffer))))
+      (insert (format "%d\n" tomorrow))
+      (save-buffer)
+      (setq streak--streak-message (streak--render tomorrow)))))
 
 ;;;###autoload
 (defun streak--tomorrow ()
