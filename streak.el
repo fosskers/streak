@@ -95,6 +95,12 @@
       (setq streak--streak-message (streak--render tomorrow)))))
 
 ;;;###autoload
+(defun streak-update ()
+  "Reread the streak file and update the mode line."
+  (interactive)
+  (setq streak--streak-message (streak-current)))
+
+;;;###autoload
 (defun streak--tomorrow ()
   "Tomorrow's date, as days since the Unix epoch."
   (1+ (streak--days-since-unix-epoch)))
@@ -103,7 +109,7 @@
 (defun streak--show-streak-in-modeline ()
   "Show the current streak count in days in the mode line."
   (unless streak--streak-message
-    (setq streak--streak-message (streak-current)))
+    (streak-update))
   (add-to-list 'global-mode-string '(t streak--streak-message)))
 
 (add-hook 'streak-mode-on-hook #'streak--show-streak-in-modeline)
