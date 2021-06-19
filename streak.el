@@ -44,13 +44,17 @@
   (time-convert nil 'integer))
 
 ;;;###autoload
-(defun streak-current ()
+(defun streak--current ()
+  "Read the streak file for the current streak."
+  (streak--render (streak--current-int)))
+
+;;;###autoload
+(defun streak--current-int ()
   "Read the streak file for the current streak."
   (unless (file-exists-p streak-file)
     (streak-init))
-  (when-let ((buffer (find-file-noselect streak-file))
-             (start (string-to-number (streak--buffer-first-line buffer))))
-    (streak--render start)))
+  (when-let ((buffer (find-file-noselect streak-file)))
+    (string-to-number (streak--buffer-first-line buffer))))
 
 ;;;###autoload
 (defun streak--render (start)
@@ -97,10 +101,28 @@
       (save-buffer))))
 
 ;;;###autoload
+(defun streak-increment ()
+  "Move the streak start back by 1 day, increasing the overall streak days."
+  (interactive)
+  (let* ((start (streak--current-int))
+         (new (- start streak--seconds-per-day)))
+    (streak-set new)
+    (setq streak--streak-message (streak--render new))))
+
+;;;###autoload
+(defun streak-decrement ()
+  "Move the streak start up by 1 day, decreasing the overall streak days."
+  (interactive)
+  (let* ((start (streak--current-int))
+         (new (+ start streak--seconds-per-day)))
+    (streak-set new)
+    (setq streak--streak-message (streak--render new))))
+
+;;;###autoload
 (defun streak-update ()
   "Reread the streak file and update the mode line."
   (interactive)
-  (setq streak--streak-message (streak-current)))
+  (setq streak--streak-message (streak--current)))
 
 ;;;###autoload
 (defun streak--tomorrow ()
