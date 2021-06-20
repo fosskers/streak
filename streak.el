@@ -9,7 +9,7 @@
 ;; Version: 1.0.0
 ;; Keywords: streak, tracking, record
 ;; Homepage: https://github.com/fosskers/streak
-;; Package-Requires: ((emacs "24.3"))
+;; Package-Requires: ((emacs "27.1"))
 ;;
 ;; This file is not part of GNU Emacs.
 ;;

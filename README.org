@@ -8,6 +8,8 @@ line!
 
 /Instructions for Vanilla Emacs needed./
 
+*Note: this package requires at least Emacs 27.1*
+
 ** Doom Emacs
 
 Place the following in your =packages.el=:
