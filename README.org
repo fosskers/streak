@@ -6,9 +6,22 @@ line!
 
 * Installation
 
-/Instructions for Vanilla Emacs needed./
-
 *Note: this package requires at least Emacs 27.1*
+
+** Vanilla Emacs
+This package is not available on Elpa/Melpa (yet), it can be cloned from GitHub and installed with ~package-install-file~. Follow the instructions below:
+
+*** In a terminal (or =eshell=)
+#+begin_src shell
+git clone https://github.com/fosskers/streak.git
+cd streak
+#+end_src
+
+*** Within Emacs:
+**** ~M-x package-install-file~
+**** Select =streak.el= from the git repo cloned above
+**** If needed: ~M-x package-initialize~
+**** ~M-x stream-mode~
 
 ** Doom Emacs
 
