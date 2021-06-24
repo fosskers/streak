@@ -61,9 +61,9 @@
   "Give a human-friendly presentation of the streak, given its START."
   (let* ((now (streak--seconds-since-unix-epoch))
          (delta (/ (- now start) streak--seconds-per-day)))
-    (cond ((< delta 0) "Streak Starts Tomorrow")
-          ((= 1 delta) "1 Day")
-          (t (format "%d Days" delta)))))
+    (cond ((< delta 0) " Streak Starts Tomorrow ")
+          ((= 1 delta) " 1 Day ")
+          (t (format " %d Days " delta)))))
 
 ;;;###autoload
 (defun streak--buffer-first-line (buffer)
