@@ -95,7 +95,7 @@ Returns the time that was set."
   (when-let ((buffer (find-file-noselect streak-file))
              (date (format-time-string "%Y-%m-%d %H:%M" seconds (current-time-zone))))
     (with-current-buffer buffer
-      (delete-region (point-min) (point-max))
+      (goto-char (point-min))
       (insert (format "%d ;; %s\n" seconds date))
       (save-buffer))))
 
