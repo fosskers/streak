@@ -5,8 +5,8 @@
 ;; Author: Colin Woodbury <https://www.fosskers.ca>
 ;; Maintainer: Colin Woodbury <colin@fosskers.ca>
 ;; Created: June 18, 2021
-;; Modified: June 18, 2021
-;; Version: 1.0.0
+;; Modified: July 20, 2021
+;; Version: 1.1.0
 ;; Keywords: streak, tracking, record
 ;; Homepage: https://github.com/fosskers/streak
 ;; Package-Requires: ((emacs "27.1"))
@@ -27,8 +27,11 @@
   :group 'streak
   :lighter " Streak")
 
-(defvar streak--seconds-per-day 86400
+(defconst streak--seconds-per-day 86400
   "The number of seconds in a day.")
+
+(defconst streak--seconds-per-hour 3600
+  "The number of seconds in an hour.")
 
 (defvar streak--streak-message nil
   "String representation of the current streak.")
@@ -60,8 +63,10 @@
 (defun streak--render (start)
   "Give a human-friendly presentation of the streak, given its START."
   (let* ((now (streak--seconds-since-unix-epoch))
-         (delta (/ (- now start) streak--seconds-per-day)))
+         (delta (/ (- now start) streak--seconds-per-day)) ;; int
+         (hours (/ (- now start) streak--seconds-per-hour))) ;; int
     (cond ((< delta 0) " Streak Starts Tomorrow ")
+          ((= 0 delta) (if (= 1 hours) " 1 Hour " (format " %d Hours " hours)))
           ((= 1 delta) " 1 Day ")
           (t (format " %d Days " delta)))))
 
