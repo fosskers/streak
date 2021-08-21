@@ -5,9 +5,9 @@
 ;; Author: Colin Woodbury <https://www.fosskers.ca>
 ;; Maintainer: Colin Woodbury <colin@fosskers.ca>
 ;; Created: June 18, 2021
-;; Modified: July 20, 2021
-;; Version: 1.1.0
-;; Keywords: streak, tracking, record
+;; Modified: August 21, 2021
+;; Version: 1.1.1
+;; Keywords: calendar
 ;; Homepage: https://github.com/fosskers/streak
 ;; Package-Requires: ((emacs "27.1"))
 ;;
@@ -20,6 +20,7 @@
 ;;
 ;;; Code:
 
+;;;###autoload
 (define-minor-mode streak-mode
   "Display the number of days of a successful streak in the mode line."
   :init-value nil
@@ -41,17 +42,14 @@
   :group 'streak
   :type 'file)
 
-;;;###autoload
 (defun streak--seconds-since-unix-epoch ()
   "The number of seconds since the Unix Epoch."
   (time-convert nil 'integer))
 
-;;;###autoload
 (defun streak--current ()
   "Read the streak file for the current streak."
   (streak--render (streak--current-int)))
 
-;;;###autoload
 (defun streak--current-int ()
   "Read the streak file for the current streak."
   (if (not (file-exists-p streak-file))
@@ -59,7 +57,6 @@
     (when-let ((buffer (find-file-noselect streak-file)))
       (string-to-number (streak--buffer-first-line buffer)))))
 
-;;;###autoload
 (defun streak--render (start)
   "Give a human-friendly presentation of the streak, given its START."
   (let* ((now (streak--seconds-since-unix-epoch))
@@ -70,14 +67,12 @@
           ((= 1 delta) " 1 Day ")
           (t (format " %d Days " delta)))))
 
-;;;###autoload
 (defun streak--buffer-first-line (buffer)
   "Yield the first line of a BUFFER as a string."
   (with-current-buffer buffer
     (goto-char (point-min))
     (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
 
-;;;###autoload
 (defun streak--init ()
   "Initialize the streak file but don't set the mode line.
 Returns the time that was set."
@@ -128,12 +123,10 @@ Returns the time that was set."
   (interactive)
   (setq streak--streak-message (streak--current)))
 
-;;;###autoload
 (defun streak--tomorrow ()
   "A time tomorrow, as seconds since the Unix epoch."
   (+ streak--seconds-per-day (streak--seconds-since-unix-epoch)))
 
-;;;###autoload
 (defun streak--show-streak-in-modeline ()
   "Show the current streak count in days in the mode line."
   (unless streak--streak-message
