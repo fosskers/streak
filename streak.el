@@ -31,12 +31,6 @@
   :group 'streak
   :lighter " Streak")
 
-(defconst streak--seconds-per-day 86400
-  "The number of seconds in a day.")
-
-(defconst streak--seconds-per-hour 3600
-  "The number of seconds in an hour.")
-
 (defvar streak--streak-message nil
   "String representation of the current streak.")
 
@@ -63,8 +57,10 @@
 (defun streak--render (start)
   "Give a human-friendly presentation of the streak, given its START."
   (let* ((now (streak--seconds-since-unix-epoch))
-         (delta (/ (- now start) streak--seconds-per-day)) ;; int
-         (hours (/ (- now start) streak--seconds-per-hour))) ;; int
+         (seconds-per-hour 3600)
+         (seconds-per-day 86400)
+         (delta (/ (- now start) seconds-per-day)) ;; int
+         (hours (/ (- now start) seconds-per-hour))) ;; int
     (cond ((< delta 0) " Streak Starts Tomorrow ")
           ((= 0 delta) (if (= 1 hours) " 1 Hour " (format " %d Hours " hours)))
           ((= 1 delta) " 1 Day ")
@@ -107,7 +103,8 @@ Returns the time that was set."
   "Move the streak start back by 1 day, increasing the overall streak days."
   (interactive)
   (let* ((start (streak--current-int))
-         (new (- start streak--seconds-per-day)))
+         (seconds-per-day 86400)
+         (new (- start seconds-per-day)))
     (streak-set new)
     (setq streak--streak-message (streak--render new))))
 
@@ -116,7 +113,8 @@ Returns the time that was set."
   "Move the streak start up by 1 day, decreasing the overall streak days."
   (interactive)
   (let* ((start (streak--current-int))
-         (new (+ start streak--seconds-per-day)))
+         (seconds-per-day 86400)
+         (new (+ start seconds-per-day)))
     (streak-set new)
     (setq streak--streak-message (streak--render new))))
 
