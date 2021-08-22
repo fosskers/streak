@@ -43,7 +43,7 @@
     (setq global-mode-string (delete '(t streak--streak-message) global-mode-string))))
 
 ;; TODO Use `file-name-concat' once Emacs 28 is the lowest supported version.
-(defcustom streak-file (concat (xdg-cache-home) "/streak")
+(defcustom streak-file (expand-file-name "streak" (xdg-cache-home))
   "The location to save the start of the current streak."
   :group 'streak
   :type 'file)
