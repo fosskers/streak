@@ -23,6 +23,8 @@
 ;;
 ;;; Code:
 
+(require 'xdg)
+
 ;;;###autoload
 (define-minor-mode streak-mode
   "Display the number of days of a successful streak in the mode line."
@@ -34,7 +36,7 @@
 (defvar streak--streak-message nil
   "String representation of the current streak.")
 
-(defcustom streak-file (substitute-in-file-name "$HOME/.cache/streak")
+(defcustom streak-file (file-name-concat (xdg-cache-home) "streak")
   "The location to save the start of the current streak."
   :group 'streak
   :type 'file)
