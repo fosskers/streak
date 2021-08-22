@@ -126,10 +126,6 @@ Returns the time that was set."
   (interactive)
   (setq streak--streak-message (streak--current)))
 
-(defun streak--tomorrow ()
-  "A time tomorrow, as seconds since the Unix epoch."
-  (+ streak--seconds-per-day (streak--seconds-since-unix-epoch)))
-
 (defun streak--show-streak-in-modeline ()
   "Show the current streak count in days in the mode line."
   (unless streak--streak-message
