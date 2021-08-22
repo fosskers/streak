@@ -31,7 +31,10 @@
   :init-value nil
   :global t
   :group 'streak
-  :lighter " Streak")
+  :lighter " Streak"
+  (if streak-mode
+      (streak--show-streak-in-modeline)
+    (streak--hide-streak-in-modeline)))
 
 (defvar streak--streak-message nil
   "String representation of the current streak.")
@@ -132,7 +135,9 @@ Returns the time that was set."
     (streak-update))
   (add-to-list 'global-mode-string '(t streak--streak-message)))
 
-(add-hook 'streak-mode-on-hook #'streak--show-streak-in-modeline)
+(defun streak--hide-streak-in-modeline ()
+  "Hide the streak from the mode line."
+  (setq global-mode-string (delete '(t streak--streak-message) global-mode-string)))
 
 (provide 'streak)
 ;;; streak.el ends here
