@@ -39,7 +39,8 @@
 (defvar streak--streak-message nil
   "String representation of the current streak.")
 
-(defcustom streak-file (file-name-concat (xdg-cache-home) "streak")
+;; TODO Use `file-name-concat' once Emacs 28 is the lowest supported version.
+(defcustom streak-file (concat (xdg-cache-home) "/streak")
   "The location to save the start of the current streak."
   :group 'streak
   :type 'file)
