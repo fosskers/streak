@@ -25,6 +25,9 @@
 
 (require 'xdg)
 
+(defvar streak--streak-message nil
+  "String representation of the current streak.")
+
 ;;;###autoload
 (define-minor-mode streak-mode
   "Display the number of days of a successful streak in the mode line."
@@ -33,11 +36,11 @@
   :group 'streak
   :lighter " Streak"
   (if streak-mode
-      (streak--show-streak-in-modeline)
-    (streak--hide-streak-in-modeline)))
-
-(defvar streak--streak-message nil
-  "String representation of the current streak.")
+      (progn
+        (unless streak--streak-message
+          (streak-update))
+        (add-to-list 'global-mode-string '(t streak--streak-message)))
+    (setq global-mode-string (delete '(t streak--streak-message) global-mode-string))))
 
 ;; TODO Use `file-name-concat' once Emacs 28 is the lowest supported version.
 (defcustom streak-file (concat (xdg-cache-home) "/streak")
@@ -129,16 +132,6 @@ Returns the time that was set."
   "Reread the streak file and update the mode line."
   (interactive)
   (setq streak--streak-message (streak--current)))
-
-(defun streak--show-streak-in-modeline ()
-  "Show the current streak count in days in the mode line."
-  (unless streak--streak-message
-    (streak-update))
-  (add-to-list 'global-mode-string '(t streak--streak-message)))
-
-(defun streak--hide-streak-in-modeline ()
-  "Hide the streak from the mode line."
-  (setq global-mode-string (delete '(t streak--streak-message) global-mode-string)))
 
 (provide 'streak)
 ;;; streak.el ends here
