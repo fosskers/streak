@@ -49,6 +49,16 @@
   :group 'streak
   :type 'file)
 
+(defcustom streak-hour-pattern " %dh "
+  "A format string for displaying the successful hours of the current streak."
+  :group 'streak
+  :type 'string)
+
+(defcustom streak-day-pattern " %dd "
+  "A format string for displaying the successful days of the current streak."
+  :group 'streak
+  :type 'string)
+
 (defun streak--seconds-since-unix-epoch ()
   "The number of seconds since the Unix Epoch."
   (time-convert nil 'integer))
@@ -71,10 +81,8 @@
          (seconds-per-day 86400)
          (delta (/ (- now start) seconds-per-day)) ;; int
          (hours (/ (- now start) seconds-per-hour))) ;; int
-    (cond ((< delta 0) " Streak Starts Tomorrow ")
-          ((= 0 delta) (if (= 1 hours) " 1 Hour " (format " %d Hours " hours)))
-          ((= 1 delta) " 1 Day ")
-          (t (format " %d Days " delta)))))
+    (cond ((= 0 delta) (format streak-hour-pattern hours))
+          (t (format streak-day-pattern delta)))))
 
 (defun streak--buffer-first-line (buffer)
   "Yield the first line of a BUFFER as a string."
