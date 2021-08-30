@@ -5,11 +5,12 @@
 ;; Author: Colin Woodbury <https://www.fosskers.ca>
 ;; Maintainer: Colin Woodbury <colin@fosskers.ca>
 ;; Created: June 18, 2021
-;; Modified: August 22, 2021
+;; Modified: August 29, 2021
 ;; Version: 2.0.0
 ;; Keywords: calendar
 ;; Homepage: https://github.com/fosskers/streak
 ;; Package-Requires: ((emacs "27.1"))
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
