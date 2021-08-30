@@ -86,7 +86,7 @@
 Returns the time that was set."
   (let ((now (streak--seconds-since-unix-epoch)))
     (message "Streak: Setting your streak start to the current time.")
-    (streak-set now)
+    (streak--set now)
     now))
 
 ;;;###autoload
@@ -96,10 +96,8 @@ Returns the time that was set."
   (let ((now (streak--init)))
     (setq streak--streak-message (streak--render now))))
 
-;;;###autoload
-(defun streak-set (seconds)
+(defun streak--set (seconds)
   "Set the streak in the streak file, given SECONDS since the Unix epoch."
-  (interactive "nSeconds since the Unix Epoch: ")
   (when-let ((buffer (find-file-noselect streak-file))
              (date (format-time-string "%Y-%m-%d %H:%M" seconds (current-time-zone))))
     (with-current-buffer buffer
@@ -114,7 +112,7 @@ Returns the time that was set."
   (let* ((start (streak--current-int))
          (seconds-per-day 86400)
          (new (- start seconds-per-day)))
-    (streak-set new)
+    (streak--set new)
     (setq streak--streak-message (streak--render new))))
 
 ;;;###autoload
@@ -124,7 +122,7 @@ Returns the time that was set."
   (let* ((start (streak--current-int))
          (seconds-per-day 86400)
          (new (+ start seconds-per-day)))
-    (streak-set new)
+    (streak--set new)
     (setq streak--streak-message (streak--render new))))
 
 ;;;###autoload
