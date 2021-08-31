@@ -55,3 +55,14 @@ customization group):
 + ~streak-file~: A filepath to the "streak file" where your records are kept.
 + ~streak-hour-pattern~: A format string (think ~printf~) for displaying your streak by hours. Only applies on the first day.
 + ~streak-day-pattern~: A format string for displaying your streak in days.
+
+* FAQ
+
+** How is this different from =org-habit=?
+
+=org-habit= is useful for tracking repeated tasks/events that occur over an
+interval, like "Vaccuum every Saturday". =streak= on the other hand is for
+maintaining a daily streak of some initiative you're pursuing, like "Study
+German every day" or "Stop eating ice cream". Further, =streak= shows you your
+current record in the mode line, thus visible at all times to keep up your
+motivation.
