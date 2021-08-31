@@ -1,6 +1,6 @@
 #+TITLE: Streak
 
-[![MELPA](https://melpa.org/packages/streak-badge.svg)](https://melpa.org/#/streak)
+[[https://melpa.org/#/streak][file:https://melpa.org/packages/streak-badge.svg]]
 
 This Emacs Lisp package provides =streak-mode=, a minor mode for tracking some
 daily streak. Exercising? Learning a language? Track your success in your mode
