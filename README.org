@@ -1,30 +1,20 @@
 #+TITLE: Streak
 
+[![MELPA](https://melpa.org/packages/streak-badge.svg)](https://melpa.org/#/streak)
+
 This Emacs Lisp package provides =streak-mode=, a minor mode for tracking some
 daily streak. Exercising? Learning a language? Track your success in your mode
 line!
+
+[[file:screenshot.png]]
 
 * Installation
 
 *Note: this package requires at least Emacs 27.1*
 
-** Vanilla Emacs
+** Melpa
 
-This package is not yet available on Elpa/Melpa. It can be cloned from GitHub
-and installed with ~package-install-file~ as follows:
-
-First, clone the repository:
-
-#+begin_src shell
-git clone https://github.com/fosskers/streak.git
-#+end_src
-
-Then, from within Emacs:
-
-+ ~M-x package-install-file~
-+ Select =streak.el= from the git repo cloned above
-+ If needed: ~M-x package-initialize~
-+ ~M-x stream-mode~
+TODO
 
 ** Doom Emacs
 
@@ -56,3 +46,12 @@ Otherwise, consider these functions for more manual control:
 + =streak-increment=: Increase your streak by 24 hours worth.
 + =streak-decrement=: The opposite of the above.
 + =streak-update=: Reread the streak file and manually update the mode line.
+
+* Customization
+
+The following aspects of =streak= can be customized (all found under the =streak=
+customization group):
+
++ ~streak-file~: A filepath to the "streak file" where your records are kept.
++ ~streak-hour-pattern~: A format string (think ~printf~) for displaying your streak by hours. Only applies on the first day.
++ ~streak-day-pattern~: A format string for displaying your streak in days.
