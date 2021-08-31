@@ -8,13 +8,33 @@ line!
 
 [[file:screenshot.png]]
 
+* Table of Contents :TOC_2_gh:
+- [[#installation][Installation]]
+  - [[#melpa][Melpa]]
+  - [[#doom-emacs][Doom Emacs]]
+- [[#usage][Usage]]
+- [[#customization][Customization]]
+- [[#faq][FAQ]]
+  - [[#how-is-this-different-from-org-habit][How is this different from =org-habit=?]]
+
 * Installation
 
 *Note: this package requires at least Emacs 27.1*
 
 ** Melpa
 
-TODO
+You can install =streak= in the usual way:
+
+#+begin_example
+M-x package-install RET streak
+#+end_example
+
+And configure it like so:
+
+#+begin_src elisp
+(use-package streak
+  :ensure t)
+#+end_src
 
 ** Doom Emacs
 
