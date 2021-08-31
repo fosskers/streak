@@ -41,11 +41,11 @@ And configure it like so:
 Place the following in your =packages.el=:
 
 #+begin_src elisp
-(package! streak
-  :recipe (:host github :repo "fosskers/streak"))
+(package! streak)
 #+end_src
 
-And make sure to run =doom sync -u=. Then in your =config.el=:
+This should automatically pull =streak= from Melpa. Now make sure to run =doom sync
+-u=. Then in your =config.el=:
 
 #+begin_src elisp
 (require 'streak)
