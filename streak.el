@@ -74,6 +74,31 @@
     (when-let ((buffer (find-file-noselect streak-file)))
       (string-to-number (streak--buffer-first-line buffer)))))
 
+(defun streak--current-streaks ()
+  "Read the streak file and return a hashtable of the current streaks.
+In the event that no streak file existed, an empty hashtable is
+returned. This is useful for setting the initial streak the first
+time `streak-mode' is used."
+  (let* ((buffer (find-file-noselect streak-file))
+         (json (streak--json-parse-buffer-lenient buffer)))
+    (cond ((hash-table-p json) json)
+          ;; TODO This legacy compat logic can be removed after a while, once
+          ;; there's probably nobody left on the old format.
+          ((integerp json) (let ((streaks (make-hash-table)))
+                             (puthash :legacy json streaks)
+                             streaks))
+          (t (error "Unexpected json parsed from streak file")))))
+
+(defun streak--json-parse-buffer-lenient (buffer)
+  "Parse the given BUFFER and return legal json no matter what."
+  (condition-case nil
+      (with-current-buffer buffer
+        ;; `json-parse-buffer' starts parsing from `point', and we want to
+        ;; guarantee it's at the beginning of the buffer.
+        (goto-char (point-min))
+        (json-parse-buffer))
+    (json-parse-error (make-hash-table))))
+
 (defun streak--render (start)
   "Give a human-friendly presentation of the streak, given its START."
   (let* ((now (streak--seconds-since-unix-epoch))
@@ -84,6 +109,7 @@
     (cond ((= 0 delta) (format streak-hour-pattern hours))
           (t (format streak-day-pattern delta)))))
 
+;; TODO Can be removed once we think nobody is on the old data format anymore.
 (defun streak--buffer-first-line (buffer)
   "Yield the first line of a BUFFER as a string."
   (with-current-buffer buffer
@@ -105,6 +131,9 @@ Returns the time that was set."
   (let ((now (streak--init)))
     (setq streak--streak-message (streak--render now))))
 
+;; TODO This has to be altered to create an initial streak. But also it should
+;; account for the default streak names set by the user (if set), since we now
+;; have to care about JSON.
 (defun streak--set (seconds)
   "Set the streak in the streak file, given SECONDS since the Unix epoch."
   (when-let ((buffer (find-file-noselect streak-file))
