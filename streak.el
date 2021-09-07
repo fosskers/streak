@@ -85,7 +85,7 @@ time `streak-mode' is used."
           ;; TODO This legacy compat logic can be removed after a while, once
           ;; there's probably nobody left on the old format.
           ((integerp json) (let ((streaks (make-hash-table)))
-                             (puthash :legacy json streaks)
+                             (puthash "legacy" json streaks)
                              streaks))
           (t (error "Unexpected json parsed from streak file")))))
 
@@ -123,6 +123,22 @@ Returns the time that was set."
     (message "Streak: Setting your streak start to the current time.")
     (streak--set now)
     now))
+
+;;;###autoload
+(defun streak-new (name)
+  "Given the NAME of a new streak to track, add it to the streak file."
+  (interactive "sName of new streak: ")
+  (let ((streaks (streak--current-streaks))
+        (now (streak--seconds-since-unix-epoch)))
+    (if (gethash name streaks)
+        (message "A streak by that name already exists.")
+      (puthash name now streaks)
+      (let ((buffer (find-file-noselect streak-file))
+            (json (json-serialize streaks)))
+        (with-current-buffer buffer
+          (delete-region (point-min) (point-max))
+          (insert json)
+          (save-buffer))))))
 
 ;;;###autoload
 (defun streak-reset ()
