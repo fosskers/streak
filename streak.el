@@ -49,12 +49,7 @@
   :group 'streak
   :type 'file)
 
-(defcustom streak-hour-pattern " %dh "
-  "A format string for displaying the successful hours of the current streak."
-  :group 'streak
-  :type 'string)
-
-(defcustom streak-day-pattern " %dd "
+(defcustom streak-day-pattern "%dd"
   "A format string for displaying the successful days of the current streak."
   :group 'streak
   :type 'string)
@@ -102,17 +97,15 @@ time `streak-mode' is used."
 (defun streak--render (start)
   "Give a human-friendly presentation of the streak, given its START."
   (let* ((now (streak--seconds-since-unix-epoch))
-         (seconds-per-hour 3600)
          (seconds-per-day 86400)
-         (delta (/ (- now start) seconds-per-day)) ;; int
-         (hours (/ (- now start) seconds-per-hour))) ;; int
-    (cond ((= 0 delta) (format streak-hour-pattern hours))
-          (t (format streak-day-pattern delta)))))
+         (delta (/ (- now start) seconds-per-day))) ;; int
+    (format streak-day-pattern delta)))
 
 (defun streak--render-streaks (streaks)
   "Render each streak in STREAKS together into a single string."
-  (let ((strings (mapcar (lambda (streak) (streak--render streak)) (hash-table-values streaks))))
-    (string-join strings " ")))
+  (let ((strings (mapcar (lambda (streak) (streak--render streak))
+                         (hash-table-values streaks))))
+    (concat " " (string-join strings " ") " ")))
 
 ;; TODO Can be removed once we think nobody is on the old data format anymore.
 (defun streak--buffer-first-line (buffer)
@@ -138,13 +131,17 @@ Returns the time that was set."
     (if (gethash name streaks)
         (message "A streak by that name already exists.")
       (puthash name now streaks)
-      (let ((buffer (find-file-noselect streak-file))
-            (json (json-serialize streaks)))
-        (with-current-buffer buffer
-          (delete-region (point-min) (point-max))
-          (insert json)
-          (save-buffer))
-        (streak-update)))))
+      (streak--write-streaks streaks)
+      (streak-update))))
+
+(defun streak--write-streaks (streaks)
+  "Write the given STREAKS hashmap to the streak file."
+  (let ((buffer (find-file-noselect streak-file))
+        (json (json-serialize streaks)))
+    (with-current-buffer buffer
+      (delete-region (point-min) (point-max))
+      (insert json)
+      (save-buffer))))
 
 ;;;###autoload
 (defun streak-reset ()
