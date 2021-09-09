@@ -185,13 +185,16 @@ Returns the time that was set."
 
 ;;;###autoload
 (defun streak-decrement ()
-  "Move the streak start up by 1 day, decreasing the overall streak days."
+  "Move a streak start up by 1 day, decreasing the overall streak days."
   (interactive)
-  (let* ((start (streak--current-int))
-         (seconds-per-day 86400)
-         (new (+ start seconds-per-day)))
-    (streak--set new)
-    (setq streak--streak-message (streak--render new))))
+  (let ((streaks (streak--current-streaks)))
+    (if (not (hash-table-empty-p streaks))
+        (when-let* ((choice (completing-read "Streak to decrement: " streaks))
+                    (seconds-per-day 86400)
+                    (new (+ (gethash choice streaks) seconds-per-day)))
+          (puthash choice new streaks)
+          (streak--write-streaks streaks)
+          (streak-update)))))
 
 ;;;###autoload
 (defun streak-update ()
