@@ -15,12 +15,14 @@
 ;; This file is not part of GNU Emacs.
 ;;
 ;;; Commentary:
-;; `streak-mode' is a minor mode for tracking some daily streak. Exercising?
+;; `streak-mode' is a minor mode for tracking daily streaks. Exercising?
 ;; Learning a language? Trying to quit a bad habit? Track your success in your
 ;; mode line!
 ;;
-;; If you've broken your streak, it can be reset with `streak-reset'. Don't
-;; worry, you'll do better next time!
+;; Start a new streak with `streak-new'. If you've broken a streak, it can be
+;; reset with `streak-reset'. Don't worry, you'll do better next time!
+;;
+;; See the Github README for configuration specifics.
 ;;
 ;;; Code:
 
@@ -52,8 +54,7 @@
 (defcustom streak-formatters nil
   "An alist of keys paired with functions to custom format streak values.
 
-Each function is passed the name of the streak and its current
-value in days, and must yield a string."
+Each function is passed the length of the streak in days, and must yield a string."
   :group 'streak
   :type '(alist :key-type string :value-type function))
 
@@ -98,7 +99,7 @@ time `streak-mode' is used."
                             (let* ((start (gethash key streaks))
                                    (fmt (cdr (assoc key streak-formatters)))
                                    (delta (/ (- now start) seconds-per-day)))
-                              (cond (fmt (funcall fmt key delta))
+                              (cond (fmt (funcall fmt delta))
                                     ((string= "legacy" key) (format "%d" delta))
                                     (t (format "%c:%d" (string-to-char key) delta)))))
                           (hash-table-keys streaks))))
