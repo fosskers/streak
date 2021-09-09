@@ -5,8 +5,8 @@
 ;; Author: Colin Woodbury <https://www.fosskers.ca>
 ;; Maintainer: Colin Woodbury <colin@fosskers.ca>
 ;; Created: June 18, 2021
-;; Modified: August 29, 2021
-;; Version: 2.0.0
+;; Modified: September 9, 2021
+;; Version: 3.0.0
 ;; Keywords: calendar
 ;; Homepage: https://github.com/fosskers/streak
 ;; Package-Requires: ((emacs "27.1"))
@@ -65,13 +65,6 @@ value in days, and must yield a string."
   "Read the streak file and render the current streaks."
   (streak--render-streaks (streak--current-streaks)))
 
-(defun streak--current-int ()
-  "Read the streak file for the current streak."
-  (if (not (file-exists-p streak-file))
-      (streak--init)
-    (when-let ((buffer (find-file-noselect streak-file)))
-      (string-to-number (streak--buffer-first-line buffer)))))
-
 (defun streak--current-streaks ()
   "Read the streak file and return a hashtable of the current streaks.
 In the event that no streak file existed, an empty hashtable is
@@ -111,21 +104,6 @@ time `streak-mode' is used."
                           (hash-table-keys streaks))))
     (concat " " (string-join strings " ") " ")))
 
-;; TODO Can be removed once we think nobody is on the old data format anymore.
-(defun streak--buffer-first-line (buffer)
-  "Yield the first line of a BUFFER as a string."
-  (with-current-buffer buffer
-    (goto-char (point-min))
-    (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
-
-(defun streak--init ()
-  "Initialize the streak file but don't set the mode line.
-Returns the time that was set."
-  (let ((now (streak--seconds-since-unix-epoch)))
-    (message "Streak: Setting your streak start to the current time.")
-    (streak--set now)
-    now))
-
 ;;;###autoload
 (defun streak-new (name)
   "Given the NAME of a new streak to track, add it to the streak file."
@@ -157,18 +135,6 @@ Returns the time that was set."
           (puthash choice (streak--seconds-since-unix-epoch) streaks)
           (streak--write-streaks streaks)
           (streak-update)))))
-
-;; TODO This has to be altered to create an initial streak. But also it should
-;; account for the default streak names set by the user (if set), since we now
-;; have to care about JSON.
-(defun streak--set (seconds)
-  "Set the streak in the streak file, given SECONDS since the Unix epoch."
-  (when-let ((buffer (find-file-noselect streak-file))
-             (date (format-time-string "%Y-%m-%d %H:%M" seconds (current-time-zone))))
-    (with-current-buffer buffer
-      (goto-char (point-min))
-      (insert (format "%d ;; %s\n" seconds date))
-      (save-buffer))))
 
 ;;;###autoload
 (defun streak-increment ()
