@@ -97,13 +97,6 @@ time `streak-mode' is used."
         (json-parse-buffer))
     (json-parse-error (make-hash-table :test 'equal))))
 
-(defun streak--render (start)
-  "Give a human-friendly presentation of the streak, given its START."
-  (let* ((now (streak--seconds-since-unix-epoch))
-         (seconds-per-day 86400)
-         (delta (/ (- now start) seconds-per-day))) ;; int
-    (format streak-day-pattern delta)))
-
 (defun streak--render-streaks (streaks)
   "Render each streak in STREAKS together into a single string."
   (let* ((now (streak--seconds-since-unix-epoch))
@@ -156,10 +149,14 @@ Returns the time that was set."
 
 ;;;###autoload
 (defun streak-reset ()
-  "Mark the current time as the start of a new streak."
+  "Mark the current time as the new start of an existing streak."
   (interactive)
-  (let ((now (streak--init)))
-    (setq streak--streak-message (streak--render now))))
+  (let ((streaks (streak--current-streaks)))
+    (if (not (hash-table-empty-p streaks))
+        (when-let ((choice (completing-read "Streak to reset: " streaks)))
+          (puthash choice (streak--seconds-since-unix-epoch) streaks)
+          (streak--write-streaks streaks)
+          (streak-update)))))
 
 ;; TODO This has to be altered to create an initial streak. But also it should
 ;; account for the default streak names set by the user (if set), since we now
