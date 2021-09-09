@@ -103,8 +103,18 @@ time `streak-mode' is used."
 
 (defun streak--render-streaks (streaks)
   "Render each streak in STREAKS together into a single string."
-  (let ((strings (mapcar (lambda (streak) (streak--render streak))
-                         (hash-table-values streaks))))
+  ;; TODO Here. Take the first char of each key and format it like n:22. Then as
+  ;; a next goal, accept special formatting strings from a defcustom that are
+  ;; unique per key.
+  (let* ((now (streak--seconds-since-unix-epoch))
+         (seconds-per-day 86400)
+         (strings (mapcar (lambda (key)
+                            (let* ((start (gethash key streaks))
+                                   (delta (/ (- now start) seconds-per-day)))
+                              (if (string= "legacy" key)
+                                  (format "%d" delta)
+                                (format "%c:%d" (string-to-char key) delta))))
+                          (hash-table-keys streaks))))
     (concat " " (string-join strings " ") " ")))
 
 ;; TODO Can be removed once we think nobody is on the old data format anymore.
