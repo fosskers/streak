@@ -49,10 +49,13 @@
   :group 'streak
   :type 'file)
 
-(defcustom streak-day-pattern "%dd"
-  "A format string for displaying the successful days of the current streak."
+(defcustom streak-formatters nil
+  "An alist of keys paired with functions to custom format streak values.
+
+Each function is passed the name of the streak and its current
+value in days, and must yield a string."
   :group 'streak
-  :type 'string)
+  :type '(alist :key-type string :value-type function))
 
 (defun streak--seconds-since-unix-epoch ()
   "The number of seconds since the Unix Epoch."
@@ -103,17 +106,15 @@ time `streak-mode' is used."
 
 (defun streak--render-streaks (streaks)
   "Render each streak in STREAKS together into a single string."
-  ;; TODO Here. Take the first char of each key and format it like n:22. Then as
-  ;; a next goal, accept special formatting strings from a defcustom that are
-  ;; unique per key.
   (let* ((now (streak--seconds-since-unix-epoch))
          (seconds-per-day 86400)
          (strings (mapcar (lambda (key)
                             (let* ((start (gethash key streaks))
+                                   (fmt (cdr (assoc key streak-formatters)))
                                    (delta (/ (- now start) seconds-per-day)))
-                              (if (string= "legacy" key)
-                                  (format "%d" delta)
-                                (format "%c:%d" (string-to-char key) delta))))
+                              (cond (fmt (funcall fmt key delta))
+                                    ((string= "legacy" key) (format "%d" delta))
+                                    (t (format "%c:%d" (string-to-char key) delta)))))
                           (hash-table-keys streaks))))
     (concat " " (string-join strings " ") " ")))
 
