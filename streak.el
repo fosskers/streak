@@ -64,8 +64,8 @@
   (time-convert nil 'integer))
 
 (defun streak--current ()
-  "Read the streak file for the current streak."
-  (streak--render (streak--current-int)))
+  "Read the streak file and render the current streaks."
+  (streak--render-streaks (streak--current-streaks)))
 
 (defun streak--current-int ()
   "Read the streak file for the current streak."
@@ -84,7 +84,7 @@ time `streak-mode' is used."
     (cond ((hash-table-p json) json)
           ;; TODO This legacy compat logic can be removed after a while, once
           ;; there's probably nobody left on the old format.
-          ((integerp json) (let ((streaks (make-hash-table)))
+          ((integerp json) (let ((streaks (make-hash-table :test 'equal)))
                              (puthash "legacy" json streaks)
                              streaks))
           (t (error "Unexpected json parsed from streak file")))))
@@ -97,7 +97,7 @@ time `streak-mode' is used."
         ;; guarantee it's at the beginning of the buffer.
         (goto-char (point-min))
         (json-parse-buffer))
-    (json-parse-error (make-hash-table))))
+    (json-parse-error (make-hash-table :test 'equal))))
 
 (defun streak--render (start)
   "Give a human-friendly presentation of the streak, given its START."
@@ -108,6 +108,11 @@ time `streak-mode' is used."
          (hours (/ (- now start) seconds-per-hour))) ;; int
     (cond ((= 0 delta) (format streak-hour-pattern hours))
           (t (format streak-day-pattern delta)))))
+
+(defun streak--render-streaks (streaks)
+  "Render each streak in STREAKS together into a single string."
+  (let ((strings (mapcar (lambda (streak) (streak--render streak)) (hash-table-values streaks))))
+    (string-join strings " ")))
 
 ;; TODO Can be removed once we think nobody is on the old data format anymore.
 (defun streak--buffer-first-line (buffer)
@@ -138,7 +143,8 @@ Returns the time that was set."
         (with-current-buffer buffer
           (delete-region (point-min) (point-max))
           (insert json)
-          (save-buffer))))))
+          (save-buffer))
+        (streak-update)))))
 
 ;;;###autoload
 (defun streak-reset ()
