@@ -48,22 +48,23 @@ This should automatically pull =streak= from Melpa. Now make sure to run =doom s
 -u=. Then in your =config.el=:
 
 #+begin_src elisp
-(require 'streak)
-(streak-mode)
+(use-package! streak
+  :config
+  (streak-mode))
 #+end_src
 
-This will start =streak-mode= upon startup.
+This will start =streak-mode= when Doom opens.
 
 * Usage
 
-=streak-mode= will automatically initialize the "streak file" the first time it is
-ran. Once you've started a streak, it will increment (in the mode line)
-automatically day by day.
+=streak-mode= will automatically create the "streak file" the first time a streak
+is made with =streak-new=. Once you've started a streak, it will increment (in the
+mode line) automatically day by day.
 
 Otherwise, consider these functions for more manual control:
 
-+ =streak-reset=: Reset your streak, with "now" as the new starting point.
-+ =streak-increment=: Increase your streak by 24 hours worth.
++ =streak-reset=: Reset a streak, with "now" as the new starting point.
++ =streak-increment=: Increase a streak by 24 hours worth.
 + =streak-decrement=: The opposite of the above.
 + =streak-update=: Reread the streak file and manually update the mode line.
 
@@ -73,8 +74,25 @@ The following aspects of =streak= can be customized (all found under the =streak
 customization group):
 
 + ~streak-file~: A filepath to the "streak file" where your records are kept.
-+ ~streak-hour-pattern~: A format string (think ~printf~) for displaying your streak by hours. Only applies on the first day.
-+ ~streak-day-pattern~: A format string for displaying your streak in days.
++ ~streak-formatters~: An =alist= of functions to customize how each streak is
+  formatted. The key of each pair must be a string that matches a streak name
+  found in your streak file, while the value must be a function that accepts the
+  days of that streak and returns a string.
+
+ #+begin_src elisp
+(setq streak-formatters '(("study" . (lambda (days) (format "Study: %d Days" days)))
+                          ("running" . (lambda (days) (format "Run: %d Days" days)))))
+ #+end_src
+
+So a full Doom config would look like:
+
+#+begin_src elisp
+(use-package! streak
+  :config
+  (setq streak-formatters '(("study" . (lambda (days) (format "Study: %d Days" days)))
+                            ("running" . (lambda (days) (format "Run: %d Days" days)))))
+  (streak-mode))
+#+end_src
 
 * FAQ
 
