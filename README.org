@@ -13,7 +13,10 @@ your success in your mode line!
   - [[#melpa][Melpa]]
   - [[#doom-emacs][Doom Emacs]]
 - [[#usage][Usage]]
+  - [[#your-first-streak][Your First Streak]]
+  - [[#manual-streak-tweaking][Manual Streak Tweaking]]
 - [[#customization][Customization]]
+  - [[#all-the-icons][=all-the-icons=]]
 - [[#faq][FAQ]]
   - [[#how-is-this-different-from-org-habit][How is this different from =org-habit=?]]
 
@@ -57,11 +60,25 @@ This will start =streak-mode= when Doom opens.
 
 * Usage
 
-=streak-mode= will automatically create the "streak file" the first time a streak
-is made with =streak-new=. Once you've started a streak, it will increment (in the
-mode line) automatically day by day.
+** Your First Streak
 
-Otherwise, consider these functions for more manual control:
+=streak-mode= stores your data in its "streak file". This file will be created
+automatically the first time a streak is made with =streak-new=:
+
+#+begin_example
+M-x streak-new
+#+end_example
+
+You'll be asked to name your streak. You can keep this simple (a single word)
+since this label won't appear as-is in your modeline. How the modeline actually
+appears can be fully customized by you (see below).
+
+Once you've started your streak, it will increment (in the mode line)
+automatically day by day.
+
+** Manual Streak Tweaking
+
+Consider these functions for manual control over the specific streak values:
 
 + =streak-reset=: Reset a streak, with "now" as the new starting point.
 + =streak-increment=: Increase a streak by 24 hours worth.
@@ -93,6 +110,10 @@ So a full Doom config would look like:
                             ("running" . (lambda (days) (format "Run: %d Days" days)))))
   (streak-mode))
 #+end_src
+
+** =all-the-icons=
+
+TODO (Feel free to PR a working setup!)
 
 * FAQ
 
