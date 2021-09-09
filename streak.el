@@ -88,7 +88,7 @@ time `streak-mode' is used."
         ;; guarantee it's at the beginning of the buffer.
         (goto-char (point-min))
         (json-parse-buffer))
-    (json-parse-error (make-hash-table :test 'equal))))
+    (error (make-hash-table :test 'equal))))
 
 (defun streak--render-streaks (streaks)
   "Render each streak in STREAKS together into a single string."
