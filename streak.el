@@ -54,7 +54,8 @@
 (defcustom streak-formatters nil
   "An alist of keys paired with functions to custom format streak values.
 
-Each function is passed the length of the streak in days, and must yield a string."
+Each function is passed the length of the streak in days, and
+must yield a string."
   :group 'streak
   :type '(alist :key-type string :value-type function))
 
