@@ -70,8 +70,7 @@ must yield a string."
 (defun streak--current-streaks ()
   "Read the streak file and return a hashtable of the current streaks.
 In the event that no streak file existed, an empty hashtable is
-returned. This is useful for setting the initial streak the first
-time `streak-mode' is used."
+returned. This is useful for setting the initial streak."
   (let* ((buffer (find-file-noselect streak-file))
          (json (streak--json-parse-buffer-lenient buffer)))
     (cond ((hash-table-p json) json)
