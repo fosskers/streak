@@ -27,6 +27,7 @@
 ;;; Code:
 
 (require 'xdg)
+(eval-when-compile (require 'subr-x))
 
 (defvar streak--streak-message nil
   "String representation of the current streak.")
