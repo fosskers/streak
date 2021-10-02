@@ -1,5 +1,15 @@
 # Streak
 
+## 3.0.0 (2021-10-02)
+
+#### Added
+
+- `streak-remove` to remove streaks that you no longer want to track.
+
+#### Changed
+
+- Streaks files of the very first, non-JSON format can no longer be read.
+
 ## 2.1.0 (2021-09-09)
 
 `streak-mode` now supports multiple streaks and totally customizable streak

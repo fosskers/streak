@@ -6,7 +6,7 @@
 ;; Maintainer: Colin Woodbury <colin@fosskers.ca>
 ;; Created: June 18, 2021
 ;; Modified: September 9, 2021
-;; Version: 2.1.0
+;; Version: 3.0.0
 ;; Keywords: calendar
 ;; Homepage: https://github.com/fosskers/streak
 ;; Package-Requires: ((emacs "27.1"))
