@@ -139,32 +139,45 @@ returned. This is useful for setting the initial streak."
   "Move a streak start back by 1 day, increasing the overall streak days."
   (interactive)
   (let ((streaks (streak--current-streaks)))
-    (if (not (hash-table-empty-p streaks))
-        (when-let* ((choice (completing-read "Streak to increment: " streaks))
-                    (seconds-per-day 86400)
-                    (new (- (gethash choice streaks) seconds-per-day)))
-          (puthash choice new streaks)
-          (streak--write-streaks streaks)
-          (streak-update)))))
+    (unless (hash-table-empty-p streaks)
+      (when-let* ((choice (completing-read "Streak to increment: " streaks))
+                  (seconds-per-day 86400)
+                  (new (- (gethash choice streaks) seconds-per-day)))
+        (puthash choice new streaks)
+        (streak--write-streaks streaks)
+        (streak-update)))))
 
 ;;;###autoload
 (defun streak-decrement ()
   "Move a streak start up by 1 day, decreasing the overall streak days."
   (interactive)
   (let ((streaks (streak--current-streaks)))
-    (if (not (hash-table-empty-p streaks))
-        (when-let* ((choice (completing-read "Streak to decrement: " streaks))
-                    (seconds-per-day 86400)
-                    (new (+ (gethash choice streaks) seconds-per-day)))
-          (puthash choice new streaks)
+    (unless (hash-table-empty-p streaks)
+      (when-let* ((choice (completing-read "Streak to decrement: " streaks))
+                  (seconds-per-day 86400)
+                  (new (+ (gethash choice streaks) seconds-per-day)))
+        (puthash choice new streaks)
+        (streak--write-streaks streaks)
+        (streak-update)))))
+
+;;;###autoload
+(defun streak-remove ()
+  "Delete the selected streak from the streak file."
+  (interactive)
+  (let ((streaks (streak--current-streaks)))
+    (unless (hash-table-empty-p streaks)
+      (when-let ((choice (completing-read "Streak to delete: " streaks)))
+        (when (yes-or-no-p (format "Really delete `%s'? " choice))
+          (remhash choice streaks)
           (streak--write-streaks streaks)
-          (streak-update)))))
+          (streak-update))))))
 
 ;;;###autoload
 (defun streak-update ()
   "Reread the streak file and update the mode line."
   (interactive)
-  (setq streak--streak-message (streak--current)))
+  (setq streak--streak-message (streak--current))
+  (message "Streak file updated."))
 
 (provide 'streak)
 ;;; streak.el ends here
