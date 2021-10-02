@@ -75,11 +75,6 @@ returned. This is useful for setting the initial streak."
   (let* ((buffer (find-file-noselect streak-file))
          (json (streak--json-parse-buffer-lenient buffer)))
     (cond ((hash-table-p json) json)
-          ;; TODO This legacy compat logic can be removed after a while, once
-          ;; there's probably nobody left on the old format.
-          ((integerp json) (let ((streaks (make-hash-table :test 'equal)))
-                             (puthash "legacy" json streaks)
-                             streaks))
           (t (error "Unexpected json parsed from streak file")))))
 
 (defun streak--json-parse-buffer-lenient (buffer)
@@ -90,6 +85,7 @@ returned. This is useful for setting the initial streak."
         ;; guarantee it's at the beginning of the buffer.
         (goto-char (point-min))
         (json-parse-buffer))
+    ;; If an error occurred, just yield an empty hash table.
     (error (make-hash-table :test 'equal))))
 
 (defun streak--render-streaks (streaks)
