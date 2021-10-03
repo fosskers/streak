@@ -84,6 +84,7 @@ Consider these functions for manual control over the specific streak values:
 + =streak-increment=: Increase a streak by 24 hours worth.
 + =streak-decrement=: The opposite of the above.
 + =streak-update=: Reread the streak file and manually update the mode line.
++ =streak-remove=: Remove a streak that you no longer want to track.
 
 * Customization
 
