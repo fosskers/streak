@@ -119,7 +119,7 @@ returned. This is useful for setting the initial streak."
   (let ((buffer (find-file-noselect streak-file))
         (json (json-serialize streaks)))
     (with-current-buffer buffer
-      (delete-region (point-min) (point-max))
+      (erase-buffer)
       (insert json)
       (save-buffer))))
 
