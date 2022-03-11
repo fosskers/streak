@@ -5,7 +5,7 @@
 ;; Author: Colin Woodbury <https://www.fosskers.ca>
 ;; Maintainer: Colin Woodbury <colin@fosskers.ca>
 ;; Created: June 18, 2021
-;; Modified: October 2, 2021
+;; Modified: October 4, 2021
 ;; Version: 3.0.0
 ;; Keywords: calendar
 ;; Homepage: https://github.com/fosskers/streak
