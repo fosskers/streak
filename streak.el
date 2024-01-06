@@ -5,8 +5,8 @@
 ;; Author: Colin Woodbury <https://www.fosskers.ca>
 ;; Maintainer: Colin Woodbury <colin@fosskers.ca>
 ;; Created: June 18, 2021
-;; Modified: October 4, 2021
-;; Version: 3.0.0
+;; Modified: January 07, 2024
+;; Version: 3.1.0
 ;; Keywords: calendar
 ;; Homepage: https://github.com/fosskers/streak
 ;; Package-Requires: ((emacs "27.1"))
@@ -46,8 +46,13 @@
         (add-to-list 'global-mode-string '(t streak--streak-message)))
     (setq global-mode-string (delete '(t streak--streak-message) global-mode-string))))
 
-;; TODO Use `file-name-concat' once Emacs 28 is the lowest supported version.
-(defcustom streak-file (expand-file-name "streak" (xdg-cache-home))
+(defcustom streak-file
+  (let ((new-path (locate-user-emacs-file "streak.json"))
+        ;; TODO Use `file-name-concat' once Emacs 28 is the lowest supported version.
+        (old-path (expand-file-name "streak" (xdg-cache-home))))
+    (cond ((file-exists-p new-path) new-path)
+          ((file-exists-p old-path) old-path)
+          (t new-path)))
   "The location to save the start of the current streak."
   :group 'streak
   :type 'file)
@@ -109,7 +114,7 @@ returned. This is useful for setting the initial streak."
   (let ((streaks (streak--current-streaks))
         (now (streak--seconds-since-unix-epoch)))
     (if (gethash name streaks)
-        (message "A streak by that name already exists.")
+        (user-error "A streak by that name already exists")
       (puthash name now streaks)
       (streak--write-streaks streaks)
       (streak-update))))

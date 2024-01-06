@@ -1,5 +1,12 @@
 # Streak
 
+## 3.1.0 (2024-01-07)
+
+#### Changed
+
+- The streak file is now stored within `user-emacs-directory` by default. The
+  old XDG-based location is still respected if the user hasn't migrated.
+
 ## 3.0.0 (2021-10-02)
 
 #### Added
